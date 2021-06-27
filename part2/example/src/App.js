@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
+import axios from 'axios'
 
-const App = (props) => {
 
-    const [notes, setNotes] = useState(props.notes)
+const App = () => {
+
+    const [notes, setNotes] = useState([])
 
     // How do we access data contained in form's input element?
     // Let's look at controlled components
@@ -11,6 +13,25 @@ const App = (props) => {
     const [newNote, setNewNote] = useState('a new note...')
     const [showAll, setShowAll] = useState(true)
 
+
+    // When data arrives from server, the JS runtime calls the function registered as the event handler, which prints
+    // "promise fulfilled" to the console and stores the notes received into the state
+    // Upon the re-render, "render 3 notes" is printed to the console and the notes fetched from the server
+    // are rendered
+
+    const hook = () => {
+        console.log("effect")
+        axios
+          .get('http://localhost:3002/notes')
+          .then(response => {
+              console.log("promise fulfilled")
+              setNotes(response.data)
+          })
+    }
+    useEffect(hook, [])
+
+    // Second parameter of useEffect is used to specify how often the effect is run
+    console.log('render', notes.length, 'notes')
     const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
     const addNote = (event) => {
