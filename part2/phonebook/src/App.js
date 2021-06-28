@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
-import axios from 'axios'
+import Person from './components/Person'
+import PhonebookService from './services/phonebook_data'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
+
   const [ newName, setNewName ] = useState('')
 
   const [ newNumber, setNewNumber ] = useState('')
@@ -16,9 +17,8 @@ const App = () => {
 
   const hook = () => {
     console.log("effect")
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => setPersons(response.data))
+    PhonebookService.getAll()
+      .then(returnedData => setPersons(returnedData))
   }
 
   useEffect(hook, [])
@@ -27,14 +27,29 @@ const App = () => {
     console.log(persons)
     event.preventDefault()
 
-    if (persons.filter(person => person.name === newName).length > 0) {
-      alert(`${newName} is already added to phonebook`)
+    if (persons.filter(person => person.name === newName && person.number === newNumber).length === 1) {
+      alert(`${newName} has already been added to the phonebook with phone number ${newNumber}`)
     }
-    else {
+    else if (persons.filter(person => person.name === newName).length === 1) {
+      if (window.confirm(`${newName} has already been added to the phonebook, replace the old number with a new one?`)) {
+        const person = persons.find(p => p.name === newName)
+        const changedPerson = {...person, number: newNumber}
+
+        PhonebookService
+          .update(person.id, changedPerson)
+          .then(returnedPerson => {
+            console.log(returnedPerson)
+            setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+          })
+      }
+    } else {
       const personObject = {name: newName, number: newNumber}
-        setPersons(persons.concat(personObject))
-        setNewName('')
-        setNewNumber('')
+      PhonebookService.create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
@@ -53,6 +68,20 @@ const App = () => {
     setSearch(event.target.value)
   }
 
+  const deleteRecord = (id) => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      PhonebookService
+        .deletePerson(id)
+        .then(returnedPerson => {
+            setPersons(persons.filter(p => p.id !== returnedPerson.id))
+          }
+        )
+      console.log(`Person with id ${id} has been removed`)
+    }
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -60,7 +89,7 @@ const App = () => {
       <h3> Add a new </h3>
         <PersonForm newName={newName} addNewPerson={addNewPerson} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons filterNames={filterNames}/>
+      {filterNames.map(person => <Person key={person.name} person={person} handleDelete={() => deleteRecord(person.id)}/>)}
     </div>
   )
 }
