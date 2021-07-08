@@ -7,6 +7,6 @@ be stored in a MongoDB database. At the end of this part, we will deploy our app
 ## Table of Contents
 - [Notes Backend Github Repository](https://github.com/ArKane-6418/FSO-notes-backend)
 - [Notes Backend Heroku application](https://murmuring-woodland-35589.herokuapp.com/)
-- [Part 3 Phonebook Frontend (Exercises 3.1-3.22)](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part2/phonebook)
-- [Part 3 Phonebook Backend Github Repository(Exercise 3.9-3.22)](https://github.com/ArKane-6418/FSO-part3-phonebook-backend)
-- [Part 3 Phonebook Backend Heroku application](https://guarded-lake-17532.herokuapp.com/)
+- [Exercises 3.1-3.22: Phonebook Frontend](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part2/phonebook)
+- [Exercises 3.9-3.22: Phonebook Backend Github Repository](https://github.com/ArKane-6418/FSO-part3-phonebook-backend)
+- [Phonebook Backend Heroku application](https://guarded-lake-17532.herokuapp.com/)

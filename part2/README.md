@@ -7,6 +7,6 @@ Lastly, we will take a quick look at a few simple ways of adding CSS styles to o
 
 ## Table of Contents
 
-- [2.1-2.5: Course Information](./courseinfo)
-- [2.6-2.11, 2.15-2.20: Phonebook](./phonebook)
-- [2.12-2.14: Countries](./countries)
+- [Exercises 2.1-2.5: Course Information](./courseinfo)
+- [Exercises 2.6-2.11, 2.15-2.20: Phonebook](./phonebook)
+- [Exercises 2.12-2.14: Countries](./countries)
