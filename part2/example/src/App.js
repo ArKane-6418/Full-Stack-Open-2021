@@ -30,7 +30,7 @@ const App = () => {
 
   const [newNote, setNewNote] = useState('a new note...')
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('Some error occurred')
+  const [errorMessage, setErrorMessage] = useState(null)
 
 
 
@@ -94,7 +94,7 @@ const App = () => {
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-        setNotes(notes.filter(n => n.id !== id))
+        // setNotes(notes.filter(n => n.id !== id))
       })
     console.log(`Note ${id} is ${note.important ? "important" : "unimportant"}`)
   }

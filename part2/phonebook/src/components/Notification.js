@@ -1,4 +1,6 @@
-const Notification = ({ message, error = false }) => {
+/* eslint-disable react/prop-types */
+const Notification = (props) => {
+  const { message, error = false } = props
   if (message) {
     if (error) {
       return (
@@ -17,5 +19,5 @@ const Notification = ({ message, error = false }) => {
   }
   return null
 }
-
+/* eslint-enable react/prop-types */
 export default Notification

@@ -1,6 +1,6 @@
-import React from 'react'
-
-const PersonForm = ( {newName, addNewPerson, handleNameChange, newNumber, handleNumberChange}) => {
+/* eslint-disable react/prop-types */
+const PersonForm = (props) => {
+  const { newName, addNewPerson, handleNameChange, newNumber, handleNumberChange } = props
   return (
     <form onSubmit={addNewPerson}>
       <div>
@@ -15,5 +15,5 @@ const PersonForm = ( {newName, addNewPerson, handleNameChange, newNumber, handle
     </form>
   )
 }
-
+/* eslint-enable react/prop-types */
 export default PersonForm

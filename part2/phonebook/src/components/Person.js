@@ -1,7 +1,8 @@
-import React from 'react'
-import PhonebookService from "../services/phonebook_data";
+import PhonebookService from '../services/phonebook_data'
+/* eslint-disable react/prop-types */
+const Person = (props) => {
 
-const Person = ({ person, setPersons, setMessage }) => {
+  const { person, setPersons, setMessage } = props
 
   // Define delete handle code
 
@@ -25,5 +26,5 @@ const Person = ({ person, setPersons, setMessage }) => {
     </tr>
   )
 }
-
+/* eslint-enable react/prop-types */
 export default Person

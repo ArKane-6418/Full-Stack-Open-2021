@@ -1,5 +1,14 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3002/notes'
+
+// Both the frontend and backend are at the same address so we use a relative URL
+const baseUrl = '/api/notes'
+
+// Changing the url to this causes problems.
+// The issue is CORS (Cross-Origin Resource Sharing) which allows restricted resources on a web page to be requested
+// from another domain outside the domain from which the first resource was served
+
+// In our context, the problem is that the JS code of an app that runs in a browser can only communicate with a server
+// in the same origin. The server is at port 3001 while the frontend is at port 3000 so they have different origins
 
 // Note that .then still returns a promise. Since we're only using response.data, to make our life easier, we just
 // return a promise containing it

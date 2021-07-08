@@ -17,11 +17,11 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
 
   const [errorMessage, setErrorMessage] = useState(null)
-  
-  const timeLimit = 5000;
+
+  const timeLimit = 5000
 
   const hook = () => {
-    console.log("effect")
+    console.log('effect')
     PhonebookService.getAll()
       .then(returnedData => setPersons(returnedData))
   }
@@ -42,35 +42,36 @@ const App = () => {
     else if (persons.filter(person => person.name === newName).length === 1) {
       if (window.confirm(`${newName} has already been added to the phonebook, replace the old number with a new one?`)) {
         const person = persons.find(p => p.name === newName)
-        const changedPerson = {...person, number: newNumber}
+        const changedPerson = { ...person, number: newNumber }
 
         PhonebookService
           .update(person.id, changedPerson)
           .then(returnedPerson => {
-            console.log(returnedPerson)
-            setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+            PhonebookService.getAll().then(data => setPersons(data))
             setSuccessMessage(`Updated ${returnedPerson.name}'s phone number`)
             setTimeout(() => {
               setSuccessMessage(null)
             }, timeLimit)
+            setNewName('')
+            setNewNumber('')
           })
           .catch(error => {
             // If we can't update the person's number, set error message and timeout
-              setErrorMessage(`Information of ${person.name} has already been removed from the server`)
-              setTimeout(() => {
-                setErrorMessage(null)
-              }, timeLimit)
-            }
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, timeLimit)
+          }
           )
       }
 
       // Create new person record and add it to persons array
     } else {
-      const personObject = {name: newName, number: newNumber}
+      const personObject = { name: newName, number: newNumber }
       PhonebookService.create(personObject)
         .then(returnedPerson => {
           // Update the persons array
-          setPersons(persons.concat(returnedPerson))
+          PhonebookService.getAll().then(data => setPersons(data))
           // Set appropriate message and timeout
           setSuccessMessage(`Added ${returnedPerson.name}`)
           setTimeout(() => {
@@ -80,6 +81,13 @@ const App = () => {
           // Reset name and number fields
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          // This is the way to access the error message
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, timeLimit)
         })
     }
   }
@@ -110,7 +118,7 @@ const App = () => {
 
       <Filter search={search} handleChange={handleSearchChange}/>
       <h3> Add a new </h3>
-        <PersonForm newName={newName} addNewPerson={addNewPerson} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
+      <PersonForm newName={newName} addNewPerson={addNewPerson} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <Persons persons={persons} search={search} setPersons={setPersons} setMessage={setSuccessMessage}/>
     </div>
