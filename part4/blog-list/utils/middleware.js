@@ -1,4 +1,30 @@
 const logger = require('./logger')
+const User = require("../models/user")
+const jwt = require("jsonwebtoken")
+
+// Let getTokenFrom handle all the auth logic so tokenExtractor and userExtractor just have to use that token result
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    // We take substring starting at index 7, meaning everything except bearer
+    return authorization.substring(7)
+  }
+  return null
+}
+
+const tokenExtractor = (request, response, next) => {
+  request.token = getTokenFrom(request)
+  next()
+}
+
+const userExtractor = async (request, response, next) => {
+  const token = getTokenFrom(request)
+  // Decode the token if it exists
+  const decodedToken = token ? jwt.verify(token, process.env.SECRET) : null
+  // Search for the corresponding user if decodedToken exists
+  request.user = decodedToken ? await User.findById(decodedToken.id) : null
+  next()
+}
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -21,6 +47,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({
+      error: 'invalid token'
+    })
   }
 
   next(error)
@@ -29,5 +59,7 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor,
+  userExtractor
 }

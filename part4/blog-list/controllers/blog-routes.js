@@ -1,26 +1,66 @@
 const blogRouter = require('express').Router()
-
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 
-blogRouter.get('/api/blogs', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs)
+const verify = (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!request.token || !decodedToken.id) {
+    response.status(401).json({ error: 'token missing or invalid' })
+  }
 
+  return decodedToken
+}
+
+blogRouter.get('/', async (request, response) => {
+  const blogs = await Blog
+    .find({})
+    .populate('user', {username: 1, name: 1})
+  response.json(blogs)
 })
 
-blogRouter.post('/api/blogs', async (request, response) => {
-  const blog = new Blog(request.body)
+blogRouter.post('/', async (request, response) => {
+  const body = request.body
+  const token = request.token
+  const user = request.user
 
+  if (!token || !user.id) {
+    return response.status(401).json({ error: 'token missing or invalid'})
+  }
+
+  if (!body.title || !body.url || !body.author) {
+    return response.status(400).json({ error: "title, author, or url missing"})
+  }
+  const blog = new Blog(
+    {
+      title: body.title,
+      url: body.url,
+      author: body.author,
+      likes: body.likes,
+      user: user._id
+    })
   const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  // Make sure to save the user after concatenating the blog id
+  // Blog id is how mongoose knows that the schema type is Blog
+  await user.save()
   response.status(201).json(savedBlog)
 })
 
-blogRouter.delete('/api/blogs/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
+blogRouter.delete('/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+  const user = request.user
+  if (blog.user.toString() !== user.id.toString()) {
+    return response.status(403).json({ error: "Only the creator can delete this blog"})
+  }
+  // user.blogs = user.blogs.filter(b => b.id.toString() !== blog.id.toString())
+  await blog.remove()
+  // await user.save()
   response.status(204).end()
 })
 
-blogRouter.put('/api/blogs/:id', async (request, response) => {
+blogRouter.put('/:id', async (request, response) => {
+  verify(request, response)
   const body = request.body
   const blog = {
     author: body.author,
