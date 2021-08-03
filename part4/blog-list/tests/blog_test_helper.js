@@ -6,13 +6,13 @@ const initialBlogs = [
     'author': 'Ernest Hemmingway',
     'url': 'https://www.youtube.com/watch?v=VEJJnEtQwKs',
     'likes': 1000,
-    'user': '61086fbad5a30d05282838bc'
+    'user': '61088d953632abd9acab82c0'
     },
   { 'title': 'I don\'t know',
     'author': 'Me',
     'url': 'https://www.youtube.com/watch?v=VEJJnEtQwKs',
     'likes': 150,
-    'user': '61086fbad5a30d05282838bc'
+    'user': '61088d953632abd9acab82c0'
     }
 ]
 
