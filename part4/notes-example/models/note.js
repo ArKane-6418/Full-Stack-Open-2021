@@ -16,6 +16,8 @@ const noteSchema = new mongoose.Schema({
   important: Boolean,
   user: {
     type: mongoose.Schema.Types.ObjectId,
+    // The functionality of the populate method of Mongoose is based on the fact that we have defined
+    // "types" to the references in the Mongoose schema with the ref option
     ref: 'User'
   }
 })

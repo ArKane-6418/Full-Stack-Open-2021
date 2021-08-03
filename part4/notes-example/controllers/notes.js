@@ -2,19 +2,33 @@
 // capable only of performing middleware and routing functions. Every Express application has a built-in app router.
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
-// Calling send makes the server respond to the HTTP request by sending a response containing <h1>Hello World!</h1>
-// Since it's in a string, express sets the value of Content-Type header to text/html
-// Status code defaults to 200
+//
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  // We will use a Bearer auth token
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    // We take substring starting at index 7, meaning everything except bearer
+    return authorization.substring(7)
+  }
+  // Return null if auth fails
+  return null
+}
 
 notesRouter.get('/', async (request, response) => {
-  // Send notes array as JSON formatted string, express sets Content-Type to application/json
-  // Recall that all the code we want to execute once the promise is returned is written in the callback function
   // If we want to call several async functions, they'd all have to be made in the callback
   // async/await fixes that problem for us
 
   // Execution of code pauses at const notes and waits until the promise is fulfilled
+  // Mongoose join is accomplished using multiple queries, but we can't guarantee the state of the collection is consistent
+
   const notes = await Note.find({})
+    // We specify the ids referencing note objects in the notes field will be replaced by the note documents
+    .populate('user', { username: 1, name: 1 })
+  // We specify what fields of the note documents in include
   response.json(notes)
 })
 
@@ -36,8 +50,25 @@ notesRouter.get('/:id', async (request, response, next) => {
 notesRouter.post('/', async (request, response, next) => {
 
   const body = request.body
-  // Body is an object, so we should specify that certain properties cannot be empty, such as content
-  // POST request allows users to add objects with arbitrary properties, so we only take the ones we need
+
+  // Isolate the token from the auth header
+  const token = getTokenFrom(request)
+
+  // Check validity of token and return the object the token was based on (our object with username and id)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+
+  // If either the token or decodedToken id are null, return 401 unauthorized error
+  if (!token || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  // Main issue with token auth is the API has blind trust to the holder. What if access has to be revoked?
+  // Two solutions:
+  // 1. Limit validity period of a token, meaning users have to re-login to get a new token
+  // 2. Save info about token to db and check validity of access rights for each request (server-side)
+  // Common to save the session of a token to a key-value db such as Redis
+  // Cookies are used for transferring the token between client and server
+  const user = await User.findById(decodedToken.id)
 
   if (!body.content) {
     return response.status(400).json({ error: 'content missing' })
@@ -47,9 +78,14 @@ notesRouter.post('/', async (request, response, next) => {
     content: body.content,
     important: body.important || false,
     date: new Date(),
+    user: user._id
   })
 
   const savedNote = await note.save()
+
+  // User object changes so id of the node is stored in the notes field
+  user.notes = user.notes.concat(savedNote._id)
+  await user.save()
   response.json(savedNote)
 
 })
