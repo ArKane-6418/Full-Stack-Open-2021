@@ -44,12 +44,17 @@ blogRouter.post('/', async (request, response) => {
   // Make sure to save the user after concatenating the blog id
   // Blog id is how mongoose knows that the schema type is Blog
   await user.save()
-  response.status(201).json(savedBlog)
+  const populatedBlog = await savedBlog
+    .populate('user', {username: 1, name: 1})
+    .execPopulate()
+  response.status(201).json(populatedBlog)
 })
 
 blogRouter.delete('/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   const user = request.user
+  console.log(blog.user)
+  console.log(user.id)
   if (blog.user.toString() !== user.id.toString()) {
     return response.status(403).json({ error: "Only the creator can delete this blog"})
   }
