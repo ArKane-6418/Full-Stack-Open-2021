@@ -6,7 +6,7 @@ import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import NoteForm from './components/NoteForm'
 import Toggleable from './components/Toggleable'
-
+import './index.css'
 
 const Footer = () => {
   // Inline styling
@@ -37,10 +37,10 @@ const App = () => {
   // Let's look at controlled components
 
 
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('root')
-  const [password, setPassword] = useState('salainen')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
 
@@ -67,6 +67,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      // Set user and user token
       setUser(user)
       noteService.setToken(user.token)
     }

@@ -12,10 +12,11 @@ const App = () => {
   const blogFormRef = useRef()
   const [flag, setFlag] = useState('success')
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('ArKane-6418')
-  const [password, setPassword] = useState('HopeThisWorks')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const filteredBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -28,19 +29,18 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
-  const addBlog = (blogObject) => {
+  const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     try {
-      blogService.create(blogObject)
-        .then(returnedBlog => {
-          setBlogs(blogs.concat(returnedBlog))
-        })
+      const createdBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(createdBlog))
       setFlag('success')
-      setNotificationMessage(`Blog ${blogObject.title} added`)
-      console.log(flag)
+      setNotificationMessage(`Blog '${createdBlog.title}' added`)
+      setUser(user)
       setTimeout(() => {
         setNotificationMessage(null)
       }, 5000)
@@ -65,7 +65,7 @@ const App = () => {
     try {
       const updatedBlog = await blogService.updateBlog(blogObject.id, { ...blogObject, likes: blogObject.likes+1 })
       setBlogs(blogs.map(b => b.id === updatedBlog.id ? { ...b, likes: updatedBlog.likes } : b))
-      setNotificationMessage(`Added a like to ${updatedBlog.title}`)
+      setNotificationMessage(`Added a like to '${updatedBlog.title}'`)
       setTimeout(() => {
         setNotificationMessage(null)
       }, 5000)
@@ -79,11 +79,11 @@ const App = () => {
     }
   }
 
-  const handleDeleteBlog = async (blogId) => {
+  const handleDeleteBlog = async (blog) => {
     try {
-      const deletedBlog = await blogService.deleteBlog(blogId)
-      setNotificationMessage(`Blog ${deletedBlog.title} deleted`)
-      setBlogs(blogs.filter(b => b.id !== blogId))
+      await blogService.deleteBlog(blog.id)
+      setNotificationMessage(`Blog '${blog.title}' deleted`)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
       setTimeout(() => {
         setNotificationMessage(null)
       }, 5000)
@@ -165,8 +165,13 @@ const App = () => {
       {logoutForm()}
       <Notification message={notificationMessage} flag={flag}/>
       {blogForm()}
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleUpdateBlog={handleUpdateBlog} handleDeleteBlog={handleDeleteBlog} user={user}/>
+      {filteredBlogs.map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleUpdateBlog={handleUpdateBlog}
+          handleDeleteBlog={handleDeleteBlog}
+          user={user}/>
       )}
     </div>
       }
