@@ -1,0 +1,19 @@
+{
+  "anecdotes": [
+    {
+      "content": "test",
+      "votes": 15,
+      "id": 1
+    },
+    {
+      "content": "test2",
+      "votes": 13,
+      "id": 2
+    },
+    {
+      "content": "testing",
+      "votes": 0,
+      "id": 3
+    }
+  ]
+}

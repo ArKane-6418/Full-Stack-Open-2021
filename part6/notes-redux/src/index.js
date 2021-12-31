@@ -1,26 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { createStore, combineReducers } from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
 import { Provider } from 'react-redux'
 import App from './App';
-import noteReducer from './reducers/noteReducer'
-import filterReducer from "./reducers/filterReducer";
+import { initializeNotes } from './reducers/noteReducer'
+import { store } from './store'
+import noteService from './services/notes'
 
-// We can combine our two reducers using combineReducers
-// How does the combined reducer work?
-// After adding a log statement to both reducers, the console shows duplicates, but why?
-// The combined reducer works in a way that every action gets handled in every part of the combined reducer
-// Multiple reducers can change their respective parts of the state based on the same action
-const reducer = combineReducers({
-  notes: noteReducer,
-  filter: filterReducer
-})
-
-const store = createStore(reducer, composeWithDevTools())
-
-console.log(store.getState())
+noteService.getAll().then(notes => 
+  store.dispatch(initializeNotes(notes))
+)
 
 // Test code
 /*
