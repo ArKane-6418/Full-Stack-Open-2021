@@ -5,5 +5,5 @@ After we have covered testing, we will take a look at implementing user authenti
 
 ## Table of Contents
 
-[Notes Backend](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part4/notes-example)
-[Bloglist Backend](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part4/blog-list)
+- [Notes Backend](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part4/notes-example)
+- [Bloglist Backend](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part4/blog-list)
