@@ -6,6 +6,6 @@ the most popular solution for managing the state of React applications.
 
 ## Table of Contents
 - [Notes Redux](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part6/notes-redux)
-- [Notes Connect Github Repository](https://guarded-lake-17532.herokuapp.com/)
+- [Notes Connect Github Repository](https://github.com/ArKane-6418/FSO-part6-notes-connect)
 - [Exercises 6.1-6.18: Anecdotes Redux](https://github.com/ArKane-6418/Full-Stack-Open-2021/tree/main/part6/anecdotes-redux)
-- [Exercises 6.19-6.21: Anecdotes Connect](https://github.com/ArKane-6418/FSO-part3-phonebook-backend)
+- [Exercises 6.19-6.21: Anecdotes Connect](https://github.com/ArKane-6418/FSO-part6-anecdotes-connect)
