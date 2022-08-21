@@ -16,7 +16,7 @@ interface Result {
 const parseExerciseArguments = (args: Array<string>): ExerciseValues => {
   if (args.length < 4) throw new Error('Too few arguments');
   // Throw an error if some of the values are not numbers
-  let numeric_args: Array<number> = Array.from(args.slice(2), Number);
+  const numeric_args: Array<number> = Array.from(args.slice(2), Number);
   
   if (numeric_args.some(isNaN)) {
     throw new Error('Provided arguments were not numbers');
@@ -24,30 +24,30 @@ const parseExerciseArguments = (args: Array<string>): ExerciseValues => {
     return {
       target: numeric_args[0],
       dailyExerciseHours: numeric_args.slice(1)
-    }
+    };
   }
-}
+};
 
-const calculateExercises = (target: number, daily_hours: Array<number>): Result => {
-  let num_training_days: number = daily_hours.filter((day) => day > 0 ).length;
-  let avg: number = daily_hours.reduce((a, b) => { return a + b }, 0) / daily_hours.length;
-  let rating_info: Map<Number, string> = new Map<Number, string>();
+export const calculateExercises = (target: number, daily_hours: Array<number>): Result => {
+  const num_training_days: number = daily_hours.filter((day) => day > 0 ).length;
+  const avg: number = daily_hours.reduce((a, b) => { return a + b; }, 0) / daily_hours.length;
+  const rating_info: Map<number, string> = new Map<number, string>();
   rating_info.set(1, "Too bad, you didn't meet your target hours this session.");
   rating_info.set(2, "Congrats, you met your target hours this session!");
   rating_info.set(3, "Wow! You greatly exceeded your target hours this session!");
 
-  let rating_value: number = (avg < target) ? 1 : ((avg < 2 * target) ? 2 : 3);
+  const rating_value: number = (avg < target) ? 1 : ((avg < 2 * target) ? 2 : 3);
 
   return {
     periodLength: daily_hours.length,
     trainingDays: num_training_days,
     success: avg >= target,
     rating: rating_value,
-    ratingDescription: rating_info.get(rating_value),
+    ratingDescription: rating_info.get(rating_value)!,
     target: target,
     average: avg
-  }
-}
+  };
+};
 
 try {
   const { target, dailyExerciseHours } = parseExerciseArguments(process.argv);

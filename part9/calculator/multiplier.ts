@@ -13,15 +13,15 @@ const parseArguments = (args: Array<string>): MultiplyValues => {
         return {
             value1: Number(args[2]),
             value2: Number(args[3])
-        }
+        };
     } else {
         throw new Error('Provided arguments were not numbers');
     }
-}
+};
 
 const multiplier = (a: number, b: number, printText: string) => {
     console.log(printText,  a * b);
-}
+};
 
 // Introduce command line args
 
