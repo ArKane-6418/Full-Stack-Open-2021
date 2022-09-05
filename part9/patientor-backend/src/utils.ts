@@ -52,15 +52,15 @@ const parseGender = (gender: unknown): Gender => {
   return gender;
 };
 
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown };
-
-const toNewPatient = ({ name, dateOfBirth, ssn, gender, occupation }: Fields): NoIdPatient => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toNewPatient = (object: any): NoIdPatient => {
   const newPatient: NoIdPatient = {
-    name: parseName(name),
-    dateOfBirth: parseDate(dateOfBirth),
-    ssn: parseSSN(ssn),
-    gender: parseGender(gender),
-    occupation: parseOccupation(occupation)
+    name: parseName(object.name),
+    dateOfBirth: parseDate(object.dateOfBirth),
+    ssn: parseSSN(object.ssn),
+    gender: parseGender(object.gender),
+    occupation: parseOccupation(object.occupation),
+    entries: object.entries
   };
 
   return newPatient;
