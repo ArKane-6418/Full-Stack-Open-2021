@@ -11,7 +11,6 @@ const getPublicPatients = (): PublicPatient[] => {
 const addPatient = (patient: NoIdPatient): Patient => {
   const patientObj = {...patient, id: uuid()};
   console.log(`Patient object: ${patientObj}`);
-  patientData.push(patientObj);
   return patientObj;
 };
 
